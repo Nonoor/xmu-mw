@@ -6,13 +6,12 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.stage.FileChooser;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import javax.jms.*;
+import java.io.*;
 
 /**
  * @author zhibin lan
@@ -20,6 +19,9 @@ import javax.jms.*;
  */
 @FXMLController
 public class SceneController {
+    @FXML
+    private Label fileNameLabel;
+
     @FXML
     private TextField sendToUserTextField;
 
@@ -48,7 +50,9 @@ public class SceneController {
     private String username;
     private MessageProducer uMessageProducer;
     private MessageProducer gMessageProducer;
+    private MessageProducer fMessageProducer;
     private ChatType curType;
+    private File file;
 
     @FXML
     void connect(ActionEvent event) {
@@ -93,6 +97,20 @@ public class SceneController {
                         if(!messageList.getItems().contains(type + fromUser)){
                             messageList.getItems().add(0,type + fromUser);
                         }
+                    }
+                    else if(message instanceof BytesMessage){
+                        BytesMessage bytesMessage=(BytesMessage)message;
+                        String name = bytesMessage.getStringProperty("name");
+                        byte[] bytes = new byte[(int) bytesMessage.getBodyLength()];
+                        bytesMessage.readBytes(bytes);
+                        File file = new File(".\\"+name);
+                        if(!file.exists()){
+                            file.createNewFile();
+                        }
+                        OutputStream os = new FileOutputStream(file);
+                        os.write(bytes);
+                        os.close();
+                        chatRecord.appendText("file: " + name);
                     }
                     else{
 
@@ -176,6 +194,20 @@ public class SceneController {
                                 messageList.getItems().add(0,type + fromUser);
                             }
                         }
+                        else if(message instanceof BytesMessage){
+                            BytesMessage bytesMessage=(BytesMessage)message;
+                            String name = bytesMessage.getStringProperty("name");
+                            byte[] bytes = new byte[(int) bytesMessage.getBodyLength()];
+                            bytesMessage.readBytes(bytes);
+                            File file = new File(".\\"+name);
+                            if(!file.exists()){
+                                file.createNewFile();
+                            }
+                            OutputStream os = new FileOutputStream(file);
+                            os.write(bytes);
+                            os.close();
+                            chatRecord.appendText("file: " + name);
+                        }
                         else{
 
                         }
@@ -189,5 +221,41 @@ public class SceneController {
             }
         }
 
+    }
+
+    @FXML
+    void sendFile(ActionEvent event) throws IOException, JMSException {
+        FileInputStream is = new FileInputStream(file);
+        byte[] fileBytes = new byte[is.available()];
+        is.read(fileBytes);
+        BytesMessage bytesMessage = session.createBytesMessage();
+        bytesMessage.writeBytes(fileBytes);
+        bytesMessage.setStringProperty("name",file.getName());
+        bytesMessage.setStringProperty("type",curType.getType()+": ");
+        if(curType == ChatType.USER) {
+            String desUser = messageList.getSelectionModel().getSelectedItem().substring(6);
+            bytesMessage.setStringProperty(curType.getType(), desUser);
+            uMessageProducer.send(bytesMessage);
+        }
+        else{
+            try {
+                String desgroup= messageList.getSelectionModel().getSelectedItem().substring(7);
+                bytesMessage.setStringProperty(curType.getType(), desgroup);
+                gMessageProducer.send(bytesMessage);
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @FXML
+    void selectFile(ActionEvent event) {
+        file = null;
+        fileNameLabel.setText("");
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("打开文件");
+        file = fileChooser.showOpenDialog(null);
+        fileNameLabel.setText(file.getName());
     }
 }
