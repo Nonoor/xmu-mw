@@ -109,6 +109,7 @@ public class SceneController {
                         chatRecord.appendText(fromUser + ": ");
                         chatRecord.appendText(textMessage.getText());
                         chatRecord.appendText('\n'+"------------------------------------------------------"+'\n');
+                        System.out.println(transApi.getTransResult(textMessage.getText(),"zh","en"));
                         if(!messageList.getItems().contains(type + fromUser)){
                             messageList.getItems().add(0,type + fromUser);
                         }

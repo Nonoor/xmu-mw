@@ -1,5 +1,5 @@
 server:
-  port: 9550
+  port: 9551
 
 baidu_translate:
   appid: 20210408000767642

@@ -6,8 +6,6 @@ import java.util.Map;
 
 import cn.edu.xmu.util.MD5;
 import cn.edu.xmu.util.TranslateData;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
