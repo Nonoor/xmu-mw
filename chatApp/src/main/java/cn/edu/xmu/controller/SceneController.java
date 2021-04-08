@@ -1,6 +1,7 @@
 package cn.edu.xmu.controller;
 
 import cn.edu.xmu.constant.ChatType;
+import cn.edu.xmu.service.TransApi;
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -9,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.jms.*;
 import java.io.*;
@@ -45,6 +47,10 @@ public class SceneController {
 
     @FXML
     private ListView<String> messageList;
+
+    @Autowired
+    private TransApi transApi;
+
 
     private Session session;
     private String username;
@@ -94,6 +100,7 @@ public class SceneController {
                         String type = textMessage.getStringProperty("type");
                         chatRecord.appendText(fromUser + ":\n");
                         chatRecord.appendText(textMessage.getText()+'\n');
+                        System.out.println(transApi.getTransResult(textMessage.getText(), "zh", "en"));
                         if(!messageList.getItems().contains(type + fromUser)){
                             messageList.getItems().add(0,type + fromUser);
                         }

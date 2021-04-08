@@ -1,2 +1,6 @@
 server:
-  port: 9546
+  port: 9550
+
+baidu_translate:
+  appid: 20210408000767642
+  securityKey: h52KGikMYSXuOoGczvqm
