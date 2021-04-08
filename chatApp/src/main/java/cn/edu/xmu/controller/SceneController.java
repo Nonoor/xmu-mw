@@ -21,6 +21,8 @@ import java.io.*;
  */
 @FXMLController
 public class SceneController {
+
+
     @FXML
     private Label fileNameLabel;
 
@@ -51,6 +53,12 @@ public class SceneController {
     @Autowired
     private TransApi transApi;
 
+
+    @FXML
+    public void initialize() {
+        chatRecord.setEditable(false);
+        chatRecord.setWrapText(true);
+    }
 
     private Session session;
     private String username;
@@ -98,9 +106,9 @@ public class SceneController {
                         TextMessage textMessage=(TextMessage)message;
                         String fromUser = textMessage.getStringProperty("from");
                         String type = textMessage.getStringProperty("type");
-                        chatRecord.appendText(fromUser + ":\n");
-                        chatRecord.appendText(textMessage.getText()+'\n');
-                        System.out.println(transApi.getTransResult(textMessage.getText(), "zh", "en"));
+                        chatRecord.appendText(fromUser + ": ");
+                        chatRecord.appendText(textMessage.getText());
+                        chatRecord.appendText('\n'+"------------------------------------------------------"+'\n');
                         if(!messageList.getItems().contains(type + fromUser)){
                             messageList.getItems().add(0,type + fromUser);
                         }
@@ -147,8 +155,9 @@ public class SceneController {
                 uMessageProducer.send(textMessage);
                 message.clear();
 
-                chatRecord.appendText(username + ":\n");
-                chatRecord.appendText(textMessage.getText()+'\n');
+                chatRecord.appendText(username + ": ");
+                chatRecord.appendText(textMessage.getText());
+                chatRecord.appendText('\n'+"------------------------------------------------------"+'\n');
             }catch (Exception ex){
                 ex.printStackTrace();
             }
@@ -195,8 +204,9 @@ public class SceneController {
                             String fromUser = textMessage.getStringProperty("from");
                             String fromGroup = textMessage.getStringProperty("group");
                             String type = textMessage.getStringProperty("type");
-                            chatRecord.appendText(fromUser + ":\n");
-                            chatRecord.appendText(textMessage.getText()+'\n');
+                            chatRecord.appendText(fromUser + ": ");
+                            chatRecord.appendText(textMessage.getText());
+                            chatRecord.appendText('\n'+"------------------------------------------------------"+'\n');
                             if(!messageList.getItems().contains(type + fromGroup)){
                                 messageList.getItems().add(0,type + fromUser);
                             }

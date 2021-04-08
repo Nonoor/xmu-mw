@@ -22,7 +22,7 @@
       <Label layoutX="449.0" layoutY="107.0" text="消息" />
       <TextField fx:id="sendToGroupTextField" layoutX="344.0" layoutY="63.0" />
       <Label layoutX="108.0" layoutY="107.0" text="会话列表" />
-      <Button layoutX="266.0" layoutY="584.0" mnemonicParsing="false" onAction="#selectFile" prefHeight="30.0" prefWidth="288.0" text="选择文件" />
+      <Button layoutX="266.0" layoutY="626.0" mnemonicParsing="false" onAction="#selectFile" prefHeight="30.0" prefWidth="288.0" text="选择文件" />
       <Button layoutX="563.0" layoutY="626.0" mnemonicParsing="false" onAction="#sendFile" prefHeight="30.0" prefWidth="104.0" text="发送文件" />
       <Label fx:id="fileNameLabel" layoutX="266.0" layoutY="626.0" prefHeight="30.0" prefWidth="288.0" />
    </children>
