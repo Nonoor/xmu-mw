@@ -53,11 +53,37 @@ public class SceneController {
     @Autowired
     private TransApi transApi;
 
+    @FXML
+    private ChoiceBox<String> transChoice;
+
+    private String transSet;
 
     @FXML
     public void initialize() {
         chatRecord.setEditable(false);
         chatRecord.setWrapText(true);
+        transChoice.getItems().addAll("不翻译","英文","中文");
+        transChoice.getSelectionModel().select("不翻译");
+        transSet = "";
+        transChoice.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                switch (newValue.intValue()){
+                    case 0:
+                        transSet = "";
+                        break;
+                    case 1:
+                        transSet = "en";
+                        break;
+                    case 2:
+                        transSet = "zh";
+                        break;
+                    default:
+                        transSet = "";
+                        break;
+                }
+            }
+        });
     }
 
     private Session session;
@@ -108,8 +134,10 @@ public class SceneController {
                         String type = textMessage.getStringProperty("type");
                         chatRecord.appendText(fromUser + ": ");
                         chatRecord.appendText(textMessage.getText());
+                        if(!transSet.equals("")){
+                            chatRecord.appendText('\n'+transApi.getTransResult(textMessage.getText(),"auto",transSet));
+                        }
                         chatRecord.appendText('\n'+"------------------------------------------------------"+'\n');
-                        System.out.println(transApi.getTransResult(textMessage.getText(),"zh","en"));
                         if(!messageList.getItems().contains(type + fromUser)){
                             messageList.getItems().add(0,type + fromUser);
                         }
@@ -145,7 +173,6 @@ public class SceneController {
         //私聊
         if(curType.equals(ChatType.USER)){
             try{
-                System.out.println("user");
                 TextMessage textMessage=session.createTextMessage();
                 textMessage.setText(message.getText());
 
@@ -155,9 +182,11 @@ public class SceneController {
                 textMessage.setStringProperty("type",curType.getType()+": ");
                 uMessageProducer.send(textMessage);
                 message.clear();
-
                 chatRecord.appendText(username + ": ");
                 chatRecord.appendText(textMessage.getText());
+                if(!transSet.equals("")){
+                    chatRecord.appendText('\n'+transApi.getTransResult(textMessage.getText(),"auto",transSet));
+                }
                 chatRecord.appendText('\n'+"------------------------------------------------------"+'\n');
             }catch (Exception ex){
                 ex.printStackTrace();
@@ -207,6 +236,9 @@ public class SceneController {
                             String type = textMessage.getStringProperty("type");
                             chatRecord.appendText(fromUser + ": ");
                             chatRecord.appendText(textMessage.getText());
+                            if(!transSet.equals("")){
+                                chatRecord.appendText('\n'+transApi.getTransResult(textMessage.getText(),"auto",transSet));
+                            }
                             chatRecord.appendText('\n'+"------------------------------------------------------"+'\n');
                             if(!messageList.getItems().contains(type + fromGroup)){
                                 messageList.getItems().add(0,type + fromUser);
