@@ -1,0 +1,13 @@
+server:
+  port: 9080             #服务端口
+spring:
+  application:
+    name: server-actuator
+management:
+  server:
+    port: 9081            #actuator端口
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: "*"

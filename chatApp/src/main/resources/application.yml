@@ -1,6 +1,28 @@
 server:
   port: 9551
 
+management:
+  server:
+    port: 9881
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+spring:
+  boot:
+    admin:
+      client:
+        url: http://localhost:9080  #这里是管理服务的网址
+        instance: chatApp            #监控服务名称
+  application:
+    name: chatApp
+
+
 baidu_translate:
   appid: 20210408000767642
-  securityKey:
+  securityKey: h52KGikMYSXuOoGczvqm
